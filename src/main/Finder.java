@@ -17,6 +17,25 @@ public class Finder extends Thread {
     }
     
     public void run() {
+        // TODO initialize variables
+        
+        // everything below is in the big while loop:
+        
+        // TODO wait until boss notifies you
+        // test and upto should be updated at this point
+        
+        // TODO test for prime-ness until stopped or test finished
+        
+        // TODO if not interrupted, tell boss test results
+        
+        while (!this.isInterrupted()) {
+        
+        }
+    }
+    
+    // this run method is broken
+    /*
+    public void run() {
         int prime;
         boolean isPrime;
         int index = start;
@@ -32,19 +51,22 @@ public class Finder extends Thread {
             isPrime = true;
             
             while (!this.isInterrupted()) {
-                prime = primes.get(index);
-                
-                if (prime > upto) {
-                    break;
-                }
-                
-                if (test % prime == 0) {
-                    isPrime = false;
-                    break;
+                while (!this.isInterrupted()) {
+                    prime = primes.get(index);
+                    
+                    if (test % prime == 0) {
+                        isPrime = false;
+                        break;
+                    } else if (prime > upto) {
+                        break;
+                    } else {
+                        index += increment;
+                    }
                 }
             }
         }
     }
+    */
     
     public void beginTest(int number, int root) {
         test = number;
