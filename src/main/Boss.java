@@ -25,6 +25,22 @@ public class Boss extends Thread {
             for (int i = 0; i < finders.length; i++) {
                 finders[i].beginTest(test, root);
             }
+            
+            waitForFinders: while (true) {
+                for (int i = 0; i < finders.length; i++) {
+                    switch (finders[i].getTestStatus()) {
+                        case FAIL:
+                            // TODO tell all finders to stop, set isPrime (not yet declared) to false, break out of this while loop
+                            break waitForFinders;
+                        
+                        case PASS:
+                            break; // probably wrong
+                        
+                        case RUNNING:
+                            // TODO continue out of this for loop
+                    }
+                }
+            }
         }
     }
 }
