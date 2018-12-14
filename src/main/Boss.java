@@ -18,28 +18,59 @@ public class Boss extends Thread {
         
         int test = 3;
         int root = 2;
+        boolean isPrime;
         
-        primes.notifyAll();
-        
+        // TODO let ui thread interface with boss
         while (true) {
-            for (int i = 0; i < finders.length; i++) {
-                finders[i].beginTest(test, root);
+            for (Finder finder : finders) {
+                finder.beginTest(test, root);
             }
             
+            isPrime = true;
+            
+            /*
+            // FIXME replace this with a way to wait until a finder notifies it
             waitForFinders: while (true) {
-                for (int i = 0; i < finders.length; i++) {
-                    switch (finders[i].getTestStatus()) {
-                        case FAIL:
-                            // TODO tell all finders to stop, set isPrime (not yet declared) to false, break out of this while loop
-                            break waitForFinders;
-                        
-                        case PASS:
-                            break; // probably wrong
+                for (Finder finder : finders) {
+                    // FIXME no Thread.yield() call while waiting
+                    // FIXME can only break out of waitForFinders on a failed test
+                    
+                    switch (finder.getTestStatus()) { // make sure to look up why you don't need the path to the enum item
+                        // TODO reorder these cases to optimize
                         
                         case RUNNING:
-                            // TODO continue out of this for loop
+                            continue; // should continue with the for loop
+                        
+                        case FAIL:
+                            isPrime = false;
+                            
+                            for (Finder f : finders) {
+                                f.endTest();
+                            }
+                            
+                            break waitForFinders; // for the while loop named above
+                        
+                        case PASS:
+                            break; // break out of the switch statement, not the for loop;
+                        
                     }
                 }
+            }
+            */
+            
+            // this loop is supposed to wait until a failed test or all finders passed
+            while (true) {
+            
+            }
+            
+            if (isPrime) {
+                primes.add(test);
+            }
+            
+            test += 2;
+            
+            if (root * root > test) {
+                root++;
             }
         }
     }

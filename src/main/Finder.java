@@ -11,11 +11,15 @@ public class Finder extends Thread {
     }
     
     public void run() {
-    
+        // TODO complete Finder's main run method
     }
     
     public void beginTest(int number, int root) {
+        // TODO complete beginTest method
+    }
     
+    public void endTest() {
+        // TODO complete endTest method
     }
     
     public TestStatus getTestStatus() {
