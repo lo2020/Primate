@@ -18,53 +18,51 @@ public class Boss extends Thread {
         
         int test = 3;
         int root = 2;
-        boolean isPrime;
+        boolean allPassed;
         
-        // TODO let ui thread interface with boss
+        // TODO let ui thread interfere with boss
         while (true) {
-            for (Finder finder : finders) {
-                finder.beginTest(test, root);
-            }
-            
-            isPrime = true;
-            
-            /*
-            // FIXME replace this with a way to wait until a finder notifies it
-            waitForFinders: while (true) {
+            synchronized (this) { // not so sure about the need for a synchronized block here
                 for (Finder finder : finders) {
-                    // FIXME no Thread.yield() call while waiting
-                    // FIXME can only break out of waitForFinders on a failed test
+                    finder.beginTest(test, root);
+                }
+                
+                // this loop is supposed to wait until a failed test or all finders passed
+                // should be notified by finders
+                waitLoop: while (true) {
+                    try {
+                        this.wait(); // should release this guy's monitor for the finders (or something like that) (probably) (?)
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     
-                    switch (finder.getTestStatus()) { // make sure to look up why you don't need the path to the enum item
-                        // TODO reorder these cases to optimize
-                        
-                        case RUNNING:
-                            continue; // should continue with the for loop
-                        
-                        case FAIL:
-                            isPrime = false;
+                    allPassed = true;
+                    
+                    // at this point, boss has its own monitor back
+                    for (Finder finder : finders) {
+                        switch (finder.getTestStatus()) {
+                            case RUNNING:
+                                allPassed = false;
+                                continue; // continue this for-each loop
                             
-                            for (Finder f : finders) {
-                                f.endTest();
-                            }
+                            case FAIL:
+                                break waitLoop;
                             
-                            break waitForFinders; // for the while loop named above
-                        
-                        case PASS:
-                            break; // break out of the switch statement, not the for loop;
-                        
+                            // you don't need to do anything if a thread has passed the test
+                        }
+                    }
+                    
+                    if (allPassed) {
+                        primes.add(test);
+                        System.out.println(test); // FIXME remove this line when UI is finished
+                        break; // out of waitLoop, of course
                     }
                 }
-            }
-            */
-            
-            // this loop is supposed to wait until a failed test or all finders passed
-            while (true) {
-            
-            }
-            
-            if (isPrime) {
-                primes.add(test);
+                
+                // stops finders that don't need stopping, probably not worth fixing
+                for (Finder finder : finders) {
+                    finder.endTest();
+                }
             }
             
             test += 2;
