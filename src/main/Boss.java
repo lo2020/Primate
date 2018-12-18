@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Boss extends Thread {
     public void run() {
-        ArrayList<Integer> primes = new ArrayList<Integer>();
+        final ArrayList<Integer> primes = new ArrayList<Integer>();
         primes.add(2);
         
         int processors = Runtime.getRuntime().availableProcessors();
@@ -22,28 +22,28 @@ public class Boss extends Thread {
         
         // TODO let ui thread interfere with boss
         while (true) {
-            synchronized (this) { // not so sure about the need for a synchronized block here
+            synchronized (this) { // FIXME remove/optimize the synchronized block here
                 for (Finder finder : finders) {
                     finder.beginTest(test, root);
                 }
                 
-                // this loop is supposed to wait until a failed test or all finders passed
-                // should be notified by finders
+                primes.notifyAll(); // this may need to be changed later
+                
                 waitLoop: while (true) {
                     try {
-                        this.wait(); // should release this guy's monitor for the finders (or something like that) (probably) (?)
+                        this.wait(); // FIXME should be primes.wait()
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     
                     allPassed = true;
                     
-                    // at this point, boss has its own monitor back
+                    // TODO optimize this loop so that you don't check finders you don't need to (maybe)
                     for (Finder finder : finders) {
                         switch (finder.getTestStatus()) {
                             case RUNNING:
                                 allPassed = false;
-                                continue; // continue this for-each loop
+                                continue; // to look for failed tests
                             
                             case FAIL:
                                 break waitLoop;
