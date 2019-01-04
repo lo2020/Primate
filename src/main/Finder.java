@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Finder extends Thread {
     private final ArrayList<Integer> primes;
-    private TestStatus status; // maybe be rebellious and make this public
+    private TestStatus status = TestStatus.RUNNING; // maybe be rebellious and make this public
     private boolean testActive;
     private Object boss;
     
