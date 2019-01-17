@@ -4,7 +4,87 @@ import java.util.ArrayList;
 
 public class Finder extends Thread {
     private final ArrayList<Integer> primes;
-    private TestStatus status = TestStatus.RUNNING; // maybe be rebellious and make this public
+    
+    private int prime;
+    private int index;
+    
+    private int testNum;
+    private int rootCeil;
+    
+    private boolean testRunning;
+    
+    private final int START;
+    private final int INCREMENT;
+    
+    public Finder(ArrayList<Integer> list, int start, int increment) {
+        this.primes = list;
+        this.START = start;
+        this.INCREMENT = increment;
+    }
+    
+    @Override
+    public void run() {
+        // TODO get rid of the helper methods and replace them with real stuff
+        
+        while (true) {
+            waitForBoss();
+            
+            setupVars(); // different from the one in Boss.java, of course
+            
+            while (testRunning) {
+                if (primeInRange()) {
+                    if (modFailed()) { // if the testing number % the current prime is zero
+                        tellBossFailed();
+                        break;
+                    } else {
+                        updateVars();
+                    }
+                } else {
+                    tellBossPassed();
+                    break;
+                }
+            }
+        }
+    }
+    
+    private void waitForBoss() {
+    
+    }
+    
+    private void setupVars() {
+    
+    }
+    
+    private boolean primeInRange() {
+        return false; // unfinished, of course
+    }
+    
+    private boolean modFailed() {
+        return false; // also unfinished, of course
+    }
+    
+    private void tellBossFailed() {
+    
+    }
+    
+    private void tellBossPassed() {
+    
+    }
+    
+    private void updateVars() {
+    
+    }
+}
+
+// the code below is broken. above is the real file.
+/*
+package main;
+
+import java.util.ArrayList;
+
+public class Finder extends Thread {
+    private final ArrayList<Integer> primes;
+    private TestStatus status = TestStatus.RUNNING; // FIXME make this public to improve performance by a bit
     private boolean testActive;
     private Object boss;
     
@@ -23,7 +103,8 @@ public class Finder extends Thread {
         
         mainLoop: while (true) {
             try {
-                synchronized (primes) {
+                synchronized (boss) { // can only execute this block if boss is waiting
+                    status = TestStatus.WAITING;
                     primes.wait();
                 }
             } catch (InterruptedException e) {
@@ -35,13 +116,11 @@ public class Finder extends Thread {
             index = START;
             prime = primes.get(index);
             
-            while (testActive && prime <= root) {
+            while (testActive && prime <= root) { // TODO potentially reverse the order of these operands
                 if (testNum % prime == 0) { // here's the money maker
                     status = TestStatus.FAIL; // all caps for enhanced drama
                     
-                    synchronized (boss) {
-                        boss.notify();
-                    }
+                    boss.notify();
                     
                     continue mainLoop;
                 }
@@ -53,6 +132,7 @@ public class Finder extends Thread {
             // if you get to this point, it means that all of the tests have passed
             
             status = TestStatus.PASS;
+            
             synchronized (boss) {
                 boss.notify();
             }
@@ -74,6 +154,7 @@ public class Finder extends Thread {
     }
 }
 
-enum TestStatus { // perhaps add an IDLE status
-    RUNNING, PASS, FAIL
+enum TestStatus {
+    RUNNING, PASS, FAIL, WAITING
 }
+*/

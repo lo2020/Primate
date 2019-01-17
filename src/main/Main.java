@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
         Boss boss = new Boss();
         boss.setPriority(10);
-        boss.setName("boss");
+        boss.setName("boss"); // not necessary
         boss.start();
     }
 }
